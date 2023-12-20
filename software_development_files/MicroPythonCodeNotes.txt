@@ -1,0 +1,67 @@
+SPACEY's MicroPython Code Notes
+Michael Burns
+
+i2c
+
+from machine import Pin, I2C
+
+i2c = I2C(0, scl=Pin(9), sda=Pin(8), freq=100000) 
+i2c.scan()
+i2c.writeto(76, b'123')
+i2c.readfrom(76, 4)
+
+i2c = I2C(1, scl=Pin(7), sda=Pin(6), freq=100000)
+i2c.scan()
+i2c.writeto_mem(76, 6, b'456')
+i2c.readfrom_mem(76, 6, 4)
+
+adc temperature
+
+import machine
+import utime
+
+sensor_temp = machine.ADC(4)
+conversion_factor = 3.3 / (65535)
+
+while True:
+    reading = sensor_temp.read_u16() * conversion_factor
+    
+    # The temperature sensor measures the Vbe voltage of a biased bipolar diode, connected to the fifth ADC channel
+    # Typically, Vbe = 0.706V at 27 degrees C, with a slope of -1.721mV (0.001721) per degree. 
+    temperature = 27 - (reading - 0.706)/0.001721
+    print(temperature)
+    utime.sleep(2)
+
+
+
+
+Preliminary code attempt for sensor data collection based on the above example code.
+
+import machine
+import utime
+from machine import Pin, I2C   #Imported relevant libraries and packages. 
+
+#Code attempt for Pololu Gyro sensor connected to the first and second GPIO pins (I2C0 SDA) and (I2C0 SCL), respectively. 
+i2c = I2C(0, scl=Pin(1), sda=Pin(0), freq=100)
+i2c.scan()
+i2c.writeto(76, b'123')  #Id like to look up the call sequence for these later for the significance of the 76 and the b'123'.
+i2c.readfrom(76, 4)
+
+#Code attempt for BMP 280 Pressure Sensor connected to the fourth and fifth GPIO pins (I2C1 SDA) and (I2C1 SCL), respectively.
+i2c = I2C(1, scl=Pin(4), sda=Pin(3), freq=100)
+i2c.scan()
+i2c.writeto_mem(76, 6, b'456')
+i2c.readfrom_mem(76, 6, 4)
+
+#Code attempt for the temperature sensor connected to the 31st GPIO pin (ADC0). 
+sensor_temp = machine.ADC(0)
+conversion_factor = 3.3 / (65535)
+
+while True;
+    reading = sensor_temp.read_u16() * conversion_factor
+    
+    #Measuring the Vbe voltage of the diode, connected to the first ADC channel.
+    #From example code; usually Vbe = 0.706V at 27 degrees C, with a slope of -1.721mV per degree.
+    temperature = 27 - (reading - 0.706)/0.001721
+    print(temperature)
+    utime.sleep(2)
