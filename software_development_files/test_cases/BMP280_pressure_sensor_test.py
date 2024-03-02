@@ -25,7 +25,7 @@ while True:
         readout = bmp280_i2c.measurements
         print(f"T: {round(readout['t'],2)} °C, P: {round(readout['p'],2)} hPa.")
     except Exception as e:
-        print("Error found reading sensor data (temperature and pressure)");
+        print("Error found reading sensor data");
         raise SystemExit
     finally:
         sleep(1)
