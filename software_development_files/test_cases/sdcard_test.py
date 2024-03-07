@@ -3,9 +3,9 @@ from machine import ADC
 from time import sleep
 
 
-pico_temp = sdcard_init('pico_temp')
+pico_temp = sdcard_init('pico_temp', ) #arguments= (self, name,cs_in,mosi_in,miso_in,sck_in,gate)
 
-adcpin = 26 # analog to digital convert pin number
+adcpin = 26 #analog to digital convert pin number
 temp36 = ADC(4)
 
 try:
