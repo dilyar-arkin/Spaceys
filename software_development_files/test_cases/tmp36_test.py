@@ -3,8 +3,8 @@ from time import sleep
 from machine import I2C
 
 # Initialize and Read values from TMP36 temperature sensor 
-adcpin = 26 # analog to digital convert pin number
-temp36 = ADC(4) 
+adcpin = 28 # analog to digital convert pin number
+temp36 = ADC(28) 
 con = 1 
 
 while con != 0:

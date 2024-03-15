@@ -4,6 +4,9 @@ from machine import ADC
 from time import sleep
 from machine import Pin,I2C
 from lsm6ds33 import LSM6DS33
+import bmp280
+from bmp280_configuration import BMP280Configuration
+from bmp280_i2c import BMP280I2C
 
 
 #instantiate objects corresponds to sensors
