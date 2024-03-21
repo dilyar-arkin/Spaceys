@@ -80,8 +80,46 @@ def read_data(bmp280_sensor, tmp36_sensor): #read data from sensors
     angular_rate = gyro.read_angular_rate()
     return temperature_bmp280, pressure, temperature_tmp36, acceleration, angular_rate
 
-def save_data(temperature_bmp280, pressure, temperature_tmp36, acceleration, angular_rate):
-    pass
+class SDCard:
+    def __init__(self, card_name, cs_pin, sck_pin, mosi_pin, miso_pin, spi_bus):
+
+    def initialize(self):
+        try:
+            uos.mountsd(self.spi_bus, self.card_name)
+            print(f"{self.card_name} initialized successfully.")
+        except Exception as e:
+            print(f"Error initializing {self.card_name}: {e}")
+
+    def write_data(self, filename, data):
+        try:
+            with open(f"/{self.card_name}/{filename}", 'a') as file:
+                file.write(data)
+            print(f"Data written to {filename} on {self.card_name}.")
+        except Exception as e:
+            print(f"Error writing data to {filename} on {self.card_name}: {e}")
+
+        #microsd = SDCard('microSD', 5, 7, 4, 6, 0)
+        #microsd.initialize()
+
+        #BMP_sd2 = SDCard('bmp_sensor_vals', 13, 11, 12, 10, 1)
+        #BMP_sd2.initialize()
+
+        #data_to_write = "SD card working!\n"
+        #microsd.write_data('data.txt', data_to_write)
+        #BMP_sd2.write_data('data.txt', data_to_write)
+
+class Data:
+    def __init__(self, filename):
+        self.filename1 = filename1
+        self.filename2 = filename2
+
+    def save_data(self, temperature_bmp280, pressure, temperature_tmp36, acceleration, angular_rate):
+        with open(self.filename1, 'a') as file1:
+            file1.write(f'Time: {utime.time()}, Temperature BMP280: {temperature_bmp280}, Pressure: {pressure}, Temperature TMP36: {temperature_tmp36}, Acceleration: {acceleration}, Angular Rate: {angular_rate}\n')
+        with open(self.filename2, 'a') as file2:
+            file2.write(f'Time: {utime.time()}, Temperature BMP280: {temperature_bmp280}, Pressure: {pressure}, Temperature TMP36: {temperature_tmp36}, Acceleration: {acceleration}, Angular Rate: {angular_rate}\n')
+    #data_log1 = Data('sensor_data.txt') 
+    #data_log1.save_data(temperature_bmp280, pressure, temperature_tmp36, acceleration, angular_rate)
 
 def RFtransmit(): #transmit data through RF
     pass
@@ -101,11 +139,18 @@ def check_temp():
 
     return high_temp, low_temp
 
-def activate_cooler(): #activate Peltier cooler
-    pass
+class Peltier: 
+    def __init__(self, relay_pin):
+        self.relay_pin = Pin(relay_pin, Pin.OUT)
 
-def deactivate_cooler(): #deactivate Peltier cooler
-    pass
+    def activate_cooler(self):
+        self.relay_pin.value(1) 
+
+    def deactivate_cooler(self):
+        self.relay_pin.value(0)
+    #cooler1 = PeltierCooler(relay_pin=...)
+    #cooler1.activate_cooler()
+    #cooler1.deactivate_cooler()
 
 def PID(temperature_bmp280): #perform PID control depending on temperature
     pass
