@@ -9,23 +9,6 @@ from bmp280_configuration import BMP280Configuration
 from bmp280_i2c import BMP280I2C
 
 
-threshold_temperature_high = 30 
-threshold_temperature_low = 10   
-
-def read_temperature(sensor):
-    return sensor.measurements['t']
-
-def activate_cooler():
-
-    pass
-
-def deactivate_cooler():
- 
-    pass
-
-high_temp = False
-low_temp = False
-
 while True:
     try:
         i2c0_sda = Pin(2)
@@ -45,20 +28,6 @@ while True:
         temperature = read_temperature(bmp280_i2c)
         print(f"T: {round(temperature,2)} °C")
         
-        if temperature > threshold_temperature_high:
-            high_temp = True
-            low_temp = False
-        elif temperature < threshold_temperature_low:
-            high_temp = False
-            low_temp = True
-        else:
-            high_temp = False
-            low_temp = False
-            
-        if high_temp or low_temp:
-            activate_cooler()
-        else:
-            deactivate_cooler()
             
     except Exception as e:
         print("Error found:", e)
