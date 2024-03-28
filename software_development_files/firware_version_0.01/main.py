@@ -62,7 +62,7 @@ def main():
         finally:
             sleep(1); #delay for 1 sec between readings
        
-    #sd = sdcard_init('microSD',5,7,4,6,0)
+    #SD = sdcard_init('SD',5,7,4,6,0)
     #BMP_sensor = bmp_func('bmp_sensor')
 
 if __name__ == "__main__":
