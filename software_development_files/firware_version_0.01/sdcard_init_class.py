@@ -28,7 +28,7 @@ class sdcard_init:
         self.sd = sdcard.SDCard(self.spi, self.cs)
         # Mount filesystem
         self.vfs = uos.VfsFat(self.sd)
-        self.uos.mount(self.vfs, "/sd")
+        uos.mount(self.vfs, "/sd")
             
 
     def write (self, val):
