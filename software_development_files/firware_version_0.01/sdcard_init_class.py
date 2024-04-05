@@ -2,6 +2,7 @@ import machine
 import time
 import sdcard
 import uos
+import os
 
 class sdcard_init:
     name = 'Unknown IO'
