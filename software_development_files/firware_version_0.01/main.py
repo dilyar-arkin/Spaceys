@@ -8,24 +8,6 @@ from bmp280_configuration import BMP280Configuration
 from bmp280_init_class import *
 from sdcard_init_class import *
 
-#adcpin = 26 # analog to digital convert pin number
-#temp36 = ADC(4) 
-#adc_value = temp36.read_u16()
-#volt = (3.3/65535)*adc_value
-#DegC = (100*volt) - 50
-
-
-#pico_sdio.write(round(DegC,2))
-
-
-#i2c1_sda = Pin(18)
-#i2c1_scl = Pin(19)
-#i2c1 = I2C(1, sda=i2c1_sda, scl=i2c1_scl, freq=400000)
-    
-#gyr = LSM6DS33(i2c1)
-#gyr.a()
-#gyr.g()
-
 def main():
     try:
         #initialize I2C bus
