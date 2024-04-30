@@ -8,7 +8,7 @@ import time
 #AMBIENT_TEMP_THRESHOLD_HIGH = 40  #Upper temperature threshold for normal operation
 #VERY_HIGH_TEMP_THRESHOLD = 80
 
-class peltier_controller:
+class peltier_cooler:
     def __init__(self, peltier_pin, temp_sensor_pin):
         self.peltier_pin = Pin(peltier_pin, Pin.OUT)
         self.temp_sensor_pin = ADC(temp_sensor_pin)
@@ -33,11 +33,11 @@ class peltier_controller:
             return None
 
     def control_peltier_cooler(self):
-        """Control Peltier cooler based on temperature."""
+        """Continuously control the Peltier cooler based on temperature values."""
         try:
             while True:
                 temperature = self.read_temperature()
-                print("Temperature:", temperature, "C")
+                return temperature                 
                 time.sleep(1)  #Sleep for 1 second before reading temperature again
         except KeyboardInterrupt:
             pass  #Exit, if interrupted
