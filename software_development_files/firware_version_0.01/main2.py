@@ -1,18 +1,33 @@
-import machine
 from machine import ADC,Pin, I2C
 import time
 import _thread 
-#from lsm6ds33 import LSM6DS33
+
+import pico_i2c_lcd
+import lcd_api
+import lcd_display_init_class
+
 import bmp280
 from bmp280_i2c import BMP280I2C
 from bmp280_configuration import BMP280Configuration
 from bmp280_init_class import *
-from sdcard_init_class import *
-import amplifier_controller
-import peltier_controller
-import relay_module
 
-TEMP_SENSOR_PIN = 28  #ADC pin for temperature sensor- amplifier
+from sdcard_init_class import *
+import sdcard
+
+#from lsm6ds33 import LSM6DS33
+import vector3d
+import imu
+from MinIMU_v5_pi import MinIMU_v5_pi
+
+import amplifier_controller
+import peltier_cooler
+import relay_module
+import PID_controller
+
+TEMP_SENSOR_PIN1 = 28  #ADC pin for temperature sensor1
+TEMP_SENSOR_PIN2 = 
+TEMP_SENSOR_PIN3 = 
+TEMP_SENSOR_PIN4 = 
 PELTIER_PIN = Pin(21, Pin.OUT)  #GPIO pin controlling Peltier cooler
 MR_AMP_PIN = Pin(16, Pin.OUT)  #GPIO pin controlling MR amplifier
 RF_DRIVE_PIN = Pin(17, Pin.OUT)  #GPIO pin controlling RF driver
@@ -25,11 +40,19 @@ def main_thread():
     while True:
         main()
         time.sleep(1)
-
+        
+#lock to safely access and modify (shared variable) RELAY_FAILURE; prevent race conditions and inconsistency
 def relay_thread(): #Continuously checking for relay failure, if detected setting RELAY_FAILURE = true
     while True:
-        #Check whether there is relay failure
-        relay_module.check_relay_failure()
+        try:
+            #Check whether there is relay failure
+            relay_module.check_relay_failure()
+            
+            with relay_lock: 
+                if relay_module.is_relay_failure(): 
+                    relay_module.correct_relay_failure() #Correct the relay module, if there is failure (if true)
+        except Exception as e:
+            print("Error in relay thread:", e)
         time.sleep(1)
 
 def main():     
@@ -43,13 +66,9 @@ def main():
     
     try:
         if relay_module.is_relay_failure():
-            print("Relay failure detected! Attempting to correct..")
-            #Correct the relay module
-            relay_module.correct_relay_failure()
-            relay_module.reset_relay_failure()
-            print("Relay failure corrected. Resuming main cycle.")
+            relay_module.correct_relay_failure() #Correct the relay module, if there is failure
         else:
-            peltier.control_peltier_cooler() #Read temperature values with 1 second in between
+            peltier.control_peltier_cooler() #If no relay failure, proceed and read temperature values with 1 second in between
                 
             #Temperature correction mode
             if AMBIENT_TEMP_THRESHOLD_HIGH < temperature < VERY_HIGH_TEMP_THRESHOLD:
@@ -84,5 +103,11 @@ def main():
 
 #Multi-threading
 if __name__ == "__main__":
-    _thread.start_new_thread(main_thread, ())
+    #Lock to synchronize access to RELAY_FAILURE
+    relay_lock = _thread.allocate_lock()
+
+    #Start the relay thread
     _thread.start_new_thread(relay_thread, ())
+
+    # Start the main thread
+    _thread.start_new_thread(main_thread, ())
