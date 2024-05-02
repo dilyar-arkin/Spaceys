@@ -3,11 +3,11 @@
 #Kp = proportional gain, Ki = integral gain, Kd = derivative gain, de/dt
 
 class PID_Controller:
-    def __init__(self, Kp, Ki, Kd, setpoint):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
-        self.setpoint = setpoint
+    def __init__(self):
+        self.Kp = #Kp 
+        self.Ki = #Ki
+        self.Kd = #Kd
+        self.setpoint = #Desired temperature
         self.previous_error = 0
         self.integral = 0
 

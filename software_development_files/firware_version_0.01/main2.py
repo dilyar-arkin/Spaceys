@@ -14,7 +14,6 @@ from bmp280_init_class import *
 from sdcard_init_class import *
 import sdcard
 
-#from lsm6ds33 import LSM6DS33
 import vector3d
 import imu
 from MinIMU_v5_pi import MinIMU_v5_pi
@@ -24,6 +23,7 @@ import peltier_cooler
 import relay_module
 import PID_controller
 
+#Define GPIO pins
 TEMP_SENSOR_PIN1 = 28  #ADC pin for temperature sensor1
 TEMP_SENSOR_PIN2 = 
 TEMP_SENSOR_PIN3 = 
@@ -32,31 +32,33 @@ PELTIER_PIN = Pin(21, Pin.OUT)  #GPIO pin controlling Peltier cooler
 MR_AMP_PIN = Pin(16, Pin.OUT)  #GPIO pin controlling MR amplifier
 RF_DRIVE_PIN = Pin(17, Pin.OUT)  #GPIO pin controlling RF driver
 
+#Define temperature thresholds
 AMBIENT_TEMP_THRESHOLD_LOW = 0   #Lower temperature threshold for normal operation
 AMBIENT_TEMP_THRESHOLD_HIGH = 40  #Upper temperature threshold for normal operation
-VERY_HIGH_TEMP_THRESHOLD = 80
+VERY_HIGH_TEMP_THRESHOLD = 80 #Extreme temperature
 
+#Main thread function
 def main_thread():
     while True:
         main()
         time.sleep(1)
-        
-#lock to safely access and modify (shared variable) RELAY_FAILURE; prevent race conditions and inconsistency
+       
+#Relay thread function
 def relay_thread(): #Continuously checking for relay failure, if detected setting RELAY_FAILURE = true
     while True:
         try:
-            #Check whether there is relay failure
             relay_module.check_relay_failure()
-            
-            with relay_lock: 
+            with relay_lock: #lock to safely access and modify (shared variable) RELAY_FAILURE; prevent race conditions and inconsistency
                 if relay_module.is_relay_failure(): 
                     relay_module.correct_relay_failure() #Correct the relay module, if there is failure (if true)
+        except RuntimeError as e:
+            print("Thread-specific error occurred:", e) 
         except Exception as e:
             print("Error in relay thread:", e)
         time.sleep(1)
 
 def main():     
-    #Create instances of amplifier and peltier cooler
+    #Create instances of amplifiers and peltier cooler
     amplifier = amplifier_controller(MR_AMP_PIN, RF_DRIVE_PIN)
     peltier = peltier_cooler(PELTIER_PIN, TEMP_SENSOR_PIN)
     temp_sensor = ADC(TEMP_SENSOR_PIN)
@@ -101,13 +103,17 @@ def main():
         print("Error: ", e)
         return #Exit the main() function
 
-#Multi-threading
 if __name__ == "__main__":
-    #Lock to synchronize access to RELAY_FAILURE
-    relay_lock = _thread.allocate_lock()
+    try:
+        #Lock to synchronize access to RELAY_FAILURE
+        relay_lock = _thread.allocate_lock()
 
-    #Start the relay thread
-    _thread.start_new_thread(relay_thread, ())
+        #Start the relay thread
+        _thread.start_new_thread(relay_thread, ())
 
-    # Start the main thread
-    _thread.start_new_thread(main_thread, ())
+        # Start the main thread
+        _thread.start_new_thread(main_thread, ())
+    except RuntimeError as e:
+        print("Thread-specific error occurred during thread creation:", e) 
+    except Exception as e:
+        print("Error occurred during thread creation:", e)
