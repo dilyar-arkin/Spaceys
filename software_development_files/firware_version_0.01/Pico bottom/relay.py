@@ -1,5 +1,5 @@
-from machine import *
-import time
+from machine import ADC, Pin, I2C
+from time import *
 
 #K2 and K3 are shorted due to soldering. They turn on and off at the same time.
 
@@ -35,8 +35,8 @@ class relay_module:
             RELAY_FAILURE = initial_state != final_state
             
         except Exception as e:
-        print("Error in relay resetting:", e)
-        relay_module.RELAY_FAILURE = True
+            print("Error in relay resetting:", e)
+            relay_module.RELAY_FAILURE = True
 
     @staticmethod
     def is_relay_failure():
@@ -45,10 +45,9 @@ class relay_module:
     @staticmethod
     def correct_relay_failure(): #Corrective action to take place if RELAY_FAILURE is True
         print("Relay failure detected! Attempting to correct..")
-        relay_module.check_relay_failure() #Reset pins and check if there is failure
+        relay_module.check_relay_failure() #Reset pins
         machine.reset() #Soft reset of the microcontroller
         relay_module.RELAY_FAILURE = False
         print("Relay failure corrected. Resuming main cycle.")
         pass
             
-

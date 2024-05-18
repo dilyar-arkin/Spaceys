@@ -9,7 +9,7 @@ def reset_pins():
      
 reset_pins()
 # Define GPIO pins
-peltier_pin = Pin(21, Pin.OUT)  # GPIO pin controlling Peltier cooler
+peltier_pin = Pin(20, Pin.OUT)  # GPIO pin controlling Peltier cooler
 temp_sensor_pin = 28            # ADC pin for temperature sensor
 
 # Define ADC object for temperature sensor
@@ -34,10 +34,10 @@ while True:
     temperature = read_temperature()
     print("Temperature:", temperature, "C")
 
-    if round(temperature) > 45:
-        # If temperature exceeds 45 degrees Celsius, turn off Peltier cooler
+    if round(temperature) > 40:
+        # If temperature exceeds 35 degrees Celsius, turn on Peltier cooler
         peltier_pin.on()
-        print("Peltier cooler turned off due to high temperature")
+        print("Peltier cooler turned on due to high temperature")
     else:
         # Otherwise, turn on Peltier cooler
         peltier_pin.off()

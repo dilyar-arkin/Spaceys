@@ -8,6 +8,9 @@ counter = 16
 peltier_pin = Pin(counter, Pin.OUT)  # GPIO pin controlling Peltier cooler
 list = [16,17,18,19,20,21,22]
 
+peltier_pin = Pin(20, Pin.OUT)
+#peltier_pin.on()
+
 while True:
     for index in list:
         peltier_pin = Pin(index, Pin.OUT)  # GPIO pin controlling Peltier cooler

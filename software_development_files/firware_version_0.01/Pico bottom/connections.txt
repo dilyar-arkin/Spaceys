@@ -1,0 +1,6 @@
+
+-big SD
+-gyroscope sensor
+-temperature sensor connected to the Peltier cooler: GPIO28
+-temperature sensor: GPIO27
+-relay
