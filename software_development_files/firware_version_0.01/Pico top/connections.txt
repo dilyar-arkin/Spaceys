@@ -1,0 +1,5 @@
+
+-microSD
+-BMP280 pressure sensor
+-temperature sensor: GPIO 26
+-temperature sensor: GPIO 22
