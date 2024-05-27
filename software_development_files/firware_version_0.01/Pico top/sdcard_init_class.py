@@ -39,7 +39,10 @@ class sdcard_init:
         filepath = f"/sd/{filename}.txt" #to avoid creation of unnecessary files
         current_time = utime.time()
         time_tuple = utime.localtime(current_time)
-        timestamp = "{:02d}:{:02d}:{:02d}".format(time_tuple[3], time_tuple[4], time_tuple[5])
+        timestamp = "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(
+            time_tuple[0], time_tuple[1], time_tuple[2],  # Year, Month, Day
+            time_tuple[3], time_tuple[4], time_tuple[5]   # Hour, Minute, Second
+        )
         with open(filepath, "a") as file:
             file.write(f"{timestamp}\t{val}\r\n")
             print(f"Data stored in {filename}.txt")           
