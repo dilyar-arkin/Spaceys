@@ -111,7 +111,7 @@ async def rf_driver_temperature_check(SD, rf_driver, peltier, temperature_sensor
                 peltier.turn_on_peltier()
             elif rf_driver_temp_data > 80:
                 rf_driver.turn_off_rf_driver()
-                #Turn off PLL simultaneously- insert statement here
+                #Turn off PLL simultaneously - insert statement here
                 raise SystemExit
             #Write RF driver's temperature data to SD card
             if rf_driver_temp_data is not None:
@@ -165,6 +165,7 @@ async def main():
     
     #Turn on RF driver in the beginnging
     rf_driver.turn_on_rf_driver()  #RF driver runs continuously - 1 Watt
+    #Turn on the pll after the RF is on - insert statement here
     
     tasks = []
     #Add tasks based on initialization combinations
